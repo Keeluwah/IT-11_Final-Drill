@@ -7,4 +7,4 @@ and see similar movies. The app uses The Movie Database (TMDb) API to fetch movi
 
 Why?
 The purpose of this project is to provide users with an easy and interactive way to discover movies. 
-It also demonstrates the use ofvanilla JavaScript for DOM manipulation and API interaction, along with CSS for styling.
+It also demonstrates the use of JavaScript for DOM manipulation and API interaction, along with CSS for styling.
