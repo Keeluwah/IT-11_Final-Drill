@@ -3,9 +3,11 @@ document.addEventListener('DOMContentLoaded', init);
 const apiKey = 'a1eaf99f91dafeb68a35eee97f7a433e';
 const apiUrl = 'https://api.themoviedb.org/3';
 const imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
+const homeButton = document.getElementById('homeButton');
 const searchInput = document.getElementById('searchInput');
 const searchButton = document.getElementById('searchButton');
-const movieContainer = document.getElementById('movieContainer');
+const movieDetailsPopup = document.getElementById('movieDetailsPopup');
+const closeButton = document.querySelector('.close-button');
 
 async function getUpcomingMovies() {
     try {
@@ -40,10 +42,20 @@ function displayMovies(movies, containerId) {
         movieElement.innerHTML = `
             <img src="${movie.poster_path ? imageBaseUrl + movie.poster_path : 'path/to/placeholder-image.jpg'}" alt="${movie.title}">
             <h3>${movie.title}</h3>
+            <div class="overview">
+                <h3>Overview</h3>
+                <p class="${getTextLengthClass(movie.overview)}">${movie.overview}</p>
+            </div>
         `;
-        movieElement.addEventListener('dblclick', () => openMovieDetails(movie.id));
+        movieElement.addEventListener('dblclick', () => displayMovieDetailsPopup(movie.id));
         container.appendChild(movieElement);
     });
+}
+
+function getTextLengthClass(text) {
+    if (text.length < 100) return 'short-text';
+    if (text.length < 300) return 'medium-text';
+    return 'long-text';
 }
 
 function updateMoviesTitle(title) {
@@ -60,30 +72,30 @@ async function getMovieDetails(movieId) {
         return null;
     }
 }
-
-async function openMovieDetails(movieId) {
+/*for popup */
+async function displayMovieDetailsPopup(movieId) {
     const movie = await getMovieDetails(movieId);
     if (!movie) {
         alert('Movie details not available.');
         return;
     }
 
-    // Clear the movie container and display movie details
-    movieContainer.innerHTML = `
-        <div class="movie-details">
-            <button id="backButton">Back</button>
-            <h1>${movie.title}</h1>
-            <img src="${movie.poster_path ? imageBaseUrl + movie.poster_path : 'path/to/placeholder-image.jpg'}" alt="${movie.title}">
-            <p>${movie.overview}</p>
-            <p>Release Date: ${movie.release_date}</p>
-            <p>Director: ${getDirector(movie.credits.crew)}</p>
-            <p>Stars: ${getStars(movie.credits.cast)}</p>
-            <p>Genre: ${getGenres(movie.genres)}</p>
-            <p>Rating: ${movie.vote_average}/10</p>
-        </div>
+    const detailsContainer = document.getElementById('detailsContainer');
+    detailsContainer.innerHTML = `
+        <h3>${movie.title}</h3>
+        <img src="${movie.poster_path ? imageBaseUrl + movie.poster_path : 'path/to/placeholder-image.jpg'}" alt="${movie.title}">
+        <p>${movie.overview}</p>
+        <p>Release Date: ${movie.release_date}</p>
+        <p>Director: ${getDirector(movie.credits.crew)}</p>
+        <p>Stars: ${getStars(movie.credits.cast)}</p>
+        <p>Genre: ${getGenres(movie.genres)}</p>
+        <p>Rating: ${movie.vote_average}/10</p>
     `;
 
-    document.getElementById('backButton').addEventListener('click', init);
+    await displaySimilarMovies(movieId);
+
+    movieDetailsPopup.style.display = 'block';
+    document.body.classList.add('dimmed');
 }
 
 function getDirector(crew) {
@@ -98,6 +110,15 @@ function getStars(cast) {
 function getGenres(genres) {
     return genres.map(genre => genre.name).join(', ');
 }
+/**simmilar movies */
+async function displaySimilarMovies(movieId) {
+    try {
+        const response = await axios.get(`${apiUrl}/movie/${movieId}/similar?api_key=${apiKey}`);
+        displayMovies(response.data.results, 'similarMovies');
+    } catch (error) {
+        console.error('Failed to fetch similar movies:', error);
+    }
+}
 
 async function init() {
     await getUpcomingMovies();
@@ -107,8 +128,28 @@ searchButton.addEventListener('click', () => {
     const query = searchInput.value.trim();
     query ? searchMovie(query) : getUpcomingMovies();
 });
-
+/*home*/
+homeButton.addEventListener('click', getUpcomingMovies);
 
 searchInput.addEventListener('keyup', event => {
     if (event.key === 'Enter') searchButton.click();
+});
+
+closeButton.addEventListener('click', () => {
+    movieDetailsPopup.style.display = 'none';
+    document.body.classList.remove('dimmed');
+});
+
+window.addEventListener('click', event => {
+    if (event.target === movieDetailsPopup) {
+        movieDetailsPopup.style.display = 'none';
+        document.body.classList.remove('dimmed');
+    }
+});
+
+window.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && movieDetailsPopup.style.display === 'block') {
+        movieDetailsPopup.style.display = 'none';
+        document.body.classList.remove('dimmed');
+    }
 });

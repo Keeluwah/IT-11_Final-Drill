@@ -8,8 +8,9 @@
 </head>
 <body>
     <header>
-        <h1><a href="index.html">Movie Searcher Web App</a></h1>
+        <div class="title">Movie Searcher Web App</div>
         <div class="search-bar">
+            <button id="homeButton">Home</button>
             <input type="text" id="searchInput" placeholder="Search for a movie">
             <button id="searchButton">Search</button>
         </div>
@@ -18,6 +19,13 @@
         <h1 id="moviesTitle">Upcoming Movies</h1>
         <section id="movieContainer"></section>
     </main>
+    <div id="movieDetailsPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-button">&times;</span>
+            <div id="detailsContainer"></div>
+            <h1>Similar Movies</h1>
+            <section id="similarMovies" class="movie-container-similar"></section>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="scripts.js"></script>

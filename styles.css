@@ -29,7 +29,7 @@ main h1 {
     margin-bottom: 20px;
 }
 
-header .logo {
+header .title {
     margin-bottom: 10px;
 }
 
@@ -62,11 +62,13 @@ header button:hover {
     background-color: #555;
 }
 
-#movieContainer {
+#movieContainer, #similarMovies {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     padding: 20px;
+    flex: 1;
+    box-sizing: border-box;
     gap: 20px;
 }
 
@@ -86,38 +88,120 @@ header button:hover {
 .movie img {
     border-bottom: 1px solid #ccc;
     max-width: 100%;
+    transition: opacity 0.3s ease;
 }
 
 .movie h3 {
     margin: 10px 0;
 }
 
-.movie-details {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
+.overview {
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    width: 80%;
+    max-height: 80%;
+    overflow-y: auto;  /* Allow the overview to be scrollable if it overflows */
+    border-radius: 10px;
+}
+
+.movie:hover {
+    transform: scale(1.05);
+}
+
+.movie:hover img {
+    opacity: 0.3;
+}
+
+.movie:hover .overview {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.popup-content {
     background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
 }
 
-.movie-details img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 20px;
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
 }
 
-.movie-details button {
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #444;
-    color: #fff;
+.close-button:hover, .close-button:focus {
+    color: #000;
+    text-decoration: none;
     cursor: pointer;
 }
 
-.movie-details button:hover {
-    background-color: #555;
+#detailsContainer img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+.movie-container-similar {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+}
+
+.similarMovie {
+    flex: 0 0 auto;
+    margin-right: 15px;
+    text-align: center;
+}
+
+.similarMovie img {
+    width: 150px;
+    height: 225px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.similarMovie h3 {
+    font-size: 1em;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+header button#homeButton {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+header button#homeButton:hover {
+    background-color: #45a049;
 }
